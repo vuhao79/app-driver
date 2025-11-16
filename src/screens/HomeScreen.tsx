@@ -5,15 +5,14 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
- 
   ImageBackground,
   Dimensions,
   StatusBar,
- 
   Alert,
   ActivityIndicator,
   Image,
   Animated,
+  ScrollView,
 } from 'react-native';
 import { User } from '../types';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -32,11 +31,10 @@ interface MenuCard {
 }
 
 const HomeScreen = ({ navigation }: any) => {
-  
   const [location, setLocation] = useState<string>('VIET NAM');
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [user, setUser] = useState<User>({} as User);
-  
+
   // Animation values
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -70,7 +68,7 @@ const HomeScreen = ({ navigation }: any) => {
           duration: 3000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
 
     // Pulse animation for the border
@@ -86,20 +84,19 @@ const HomeScreen = ({ navigation }: any) => {
           duration: 1500,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   };
   const getCurrentUser = async () => {
-    
     const userFromStore = await AsyncStorage.getItem('user');
     if (userFromStore) {
       setUser(JSON.parse(userFromStore));
     }
-  }
+  };
   const requestLocationPermission = async () => {
     try {
       setLoadingLocation(true);
-      
+
       // Check if location was saved from LocationPermissionScreen
       const savedLocation = await AsyncStorage.getItem('userLocation');
       if (savedLocation) {
@@ -109,15 +106,15 @@ const HomeScreen = ({ navigation }: any) => {
       }
 
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
+
       if (status !== 'granted') {
         Alert.alert(
           'Permission Denied',
           'Location permission is required to show your current address.',
           [
             { text: 'Cancel', style: 'cancel' },
-            { text: 'Open Settings', onPress: () => Location.requestForegroundPermissionsAsync() }
-          ]
+            { text: 'Open Settings', onPress: () => Location.requestForegroundPermissionsAsync() },
+          ],
         );
         setLoadingLocation(false);
         return;
@@ -146,16 +143,12 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (addresses && addresses.length > 0) {
         const address = addresses[0];
-        const locationString = [
-          address.city,
-          address.region,
-          address.country,
-        ]
+        const locationString = [address.city, address.region, address.country]
           .filter(Boolean)
           .join(', ');
-        
+
         setLocation(locationString || 'Location Found');
-        
+
         // Save to AsyncStorage
         await AsyncStorage.setItem('userLocation', locationString);
       }
@@ -168,12 +161,13 @@ const HomeScreen = ({ navigation }: any) => {
   };
 
   const handleLocationPress = () => {
-     setLoadingLocation(true);
-     getCurrentLocation();
+    setLoadingLocation(true);
+    getCurrentLocation();
   };
 
   // Menu cards configuration - Easy to add more cards
-  const menuCards: MenuCard[] = [{
+  const menuCards: MenuCard[] = [
+    {
       id: '1',
       title: 'All Trips',
       description: 'View and manage all your trips in one place',
@@ -182,8 +176,7 @@ const HomeScreen = ({ navigation }: any) => {
       iconBgColor: '#FCE4EC',
       onPress: () => navigation.navigate('Dashboard'),
     },
-  
-    
+
     {
       id: '2',
       title: 'Notes',
@@ -193,16 +186,17 @@ const HomeScreen = ({ navigation }: any) => {
       iconBgColor: '#E8F5E9',
       onPress: () => console.log('Expenses'),
     },
- 
   ];
 
   const renderCard = (card: MenuCard) => (
-    <TouchableOpacity
-      key={card.id}
-      style={styles.card}
-      onPress={card.onPress}
-      activeOpacity={0.7}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: 12 }}>
+    <TouchableOpacity key={card.id} style={styles.card} onPress={card.onPress} activeOpacity={0.7}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          gap: 12,
+        }}>
         <View style={[styles.iconContainer, { backgroundColor: card.iconBgColor }]}>
           <FontAwesome6 name={card.icon} size={32} color={card.iconColor} />
         </View>
@@ -217,7 +211,7 @@ const HomeScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Background Image - Fixed Header */}
       <ImageBackground
         source={require('../../assets/truck-welcome.jpg')}
@@ -226,181 +220,181 @@ const HomeScreen = ({ navigation }: any) => {
         <View style={styles.backgroundOverlay}>
           {/* Header Section - Fixed */}
           <View style={styles.headerSection}>
-          {/* Status Bar */}
-          <View style={styles.statusBar}>
-            <Text style={styles.time}></Text>
-            <View style={styles.rightIcons} />
-          </View>
-
-          {/* Location */}
-          <View style={styles.locationContainer}>
-            <Text style={styles.locationLabel}>Current Address</Text>
-            <View style={styles.locationRow}>
-              {loadingLocation ? (
-                <View style={styles.loadingLocationContainer}>
-                  <ActivityIndicator size="small" color="#fff" />
-                  <Text style={styles.loadingLocationText}>Getting location...</Text>
-                </View>
-              ) : (
-                <>
-                  <TouchableOpacity 
-                    style={styles.locationButton}
-                    onPress={handleLocationPress}>
-                    <FontAwesome6 name="location-dot" size={20} color="#fff" />
-                  </TouchableOpacity>
-                  <Text style={styles.locationText} numberOfLines={1}>
-                    {location}
-                  </Text>
-                </>
-              )}
+            {/* Status Bar */}
+            <View style={styles.statusBar}>
+              <Text style={styles.time}></Text>
+              <View style={styles.rightIcons} />
             </View>
-          </View>
 
-          {/* Welcome Section */}
-          <View style={styles.welcomeSection}>
-            <View style={styles.welcomeContent}>
-              <View style={styles.welcomeTextContainer}>
-                <Text style={styles.welcomeText}>WELCOME</Text>
-                <Text style={styles.driverName}>
-                  {user ? user.firstName + ' ' + user.lastName : 'Guest'}
-                </Text>
-                <Text style={styles.driverInfo}>Email: {user?.email || 'N/A'}</Text>
-                <Text style={styles.driverInfo}>Vehicle Number: N/A</Text>
+            {/* Location */}
+            <View style={styles.locationContainer}>
+              <Text style={styles.locationLabel}>Current Address</Text>
+              <View style={styles.locationRow}>
+                {loadingLocation ? (
+                  <View style={styles.loadingLocationContainer}>
+                    <ActivityIndicator size="small" color="#fff" />
+                    <Text style={styles.loadingLocationText}>Getting location...</Text>
+                  </View>
+                ) : (
+                  <>
+                    <TouchableOpacity style={styles.locationButton} onPress={handleLocationPress}>
+                      <FontAwesome6 name="location-dot" size={20} color="#fff" />
+                    </TouchableOpacity>
+                    <Text style={styles.locationText} numberOfLines={1}>
+                      {location}
+                    </Text>
+                  </>
+                )}
               </View>
-              
-              {/* Animated Avatar */}
-              <Animated.View 
-                style={[
-                  styles.avatarContainer,
-                  {
-                    transform: [
-                      { scale: scaleAnim },
-                      {
-                        rotate: rotateAnim.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['0deg', '5deg'],
-                        }),
-                      },
-                    ],
-                  },
-                ]}>
+            </View>
+
+            {/* Welcome Section */}
+            <View style={styles.welcomeSection}>
+              <View style={styles.welcomeContent}>
+                <View style={styles.welcomeTextContainer}>
+                  <Text style={styles.welcomeText}>WELCOME</Text>
+                  <Text style={styles.driverName}>
+                    {user ? user.firstName + ' ' + user.lastName : 'Guest'}
+                  </Text>
+                  <Text style={styles.driverInfo}>Email: {user?.email || 'N/A'}</Text>
+                  <Text style={styles.driverInfo}>Vehicle Number: N/A</Text>
+                </View>
+
+                {/* Animated Avatar */}
                 <Animated.View
                   style={[
-                    styles.avatarBorder,
+                    styles.avatarContainer,
                     {
-                      transform: [{ scale: pulseAnim }],
+                      transform: [
+                        { scale: scaleAnim },
+                        {
+                          rotate: rotateAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0deg', '5deg'],
+                          }),
+                        },
+                      ],
                     },
                   ]}>
-                  {user?.avatar ? (
-                    <Image 
-                      source={{ uri: `http://api.test.acexustrans.com/upload/User_Avatar/${user.avatar}` }} 
-                      style={styles.avatarImage}
-                    />
-                  ) : (
-                    <View style={styles.avatarPlaceholder}>
-                      <Text style={styles.avatarInitials}>
-                        {user?.firstName?.[0] || 'G'}{user?.lastName?.[0] || 'N'}
-                      </Text>
+                  <Animated.View
+                    style={[
+                      styles.avatarBorder,
+                      {
+                        transform: [{ scale: pulseAnim }],
+                      },
+                    ]}>
+                    {user?.avatar ? (
+                      <Image
+                        source={{
+                          uri: `http://api.test.acexustrans.com/upload/User_Avatar/${user.avatar}`,
+                        }}
+                        style={styles.avatarImage}
+                      />
+                    ) : (
+                      <View style={styles.avatarPlaceholder}>
+                        <Text style={styles.avatarInitials}>
+                          {user?.firstName?.[0] || 'G'}
+                          {user?.lastName?.[0] || 'N'}
+                        </Text>
+                      </View>
+                    )}
+                    {/* Online Status Indicator */}
+                    <View style={styles.onlineIndicator}>
+                      <View style={styles.onlineDot} />
                     </View>
-                  )}
-                  {/* Online Status Indicator */}
-                  <View style={styles.onlineIndicator}>
-                    <View style={styles.onlineDot} />
-                  </View>
+                  </Animated.View>
                 </Animated.View>
-              </Animated.View>
+              </View>
             </View>
           </View>
-        </View>
         </View>
       </ImageBackground>
 
       {/* Dashboard Section - Scrollable */}
       <View style={styles.dashboardContainer}>
-        <View style={styles.cards}>
-        <View
-          style={styles.dashboardScrollView}
-          // contentContainerStyle={styles.dashboardScrollContent}
-          // showsVerticalScrollIndicator={false}
-          >
-          <View style={styles.cardsSection}>
-            {/* Quick Stats */}
-            <View style={styles.statsContainer}>
-              <View style={styles.statCard}>
-                <View style={styles.statIconContainer}>
-                  <FontAwesome6 name="truck-fast" size={24} color="#2196F3" />
-                </View>
-                <View style={styles.statContent}>
-                  <Text style={styles.statValue}>0</Text>
-                  <Text style={styles.statLabel}>Active Trips</Text>
-                </View>
-              </View>
-
-              <View style={styles.statCard}>
-                <View style={[styles.statIconContainer, { backgroundColor: '#E8F5E9' }]}>
-                  <FontAwesome6 name="circle-check" size={24} color="#4CAF50" />
-                </View>
-                <View style={styles.statContent}>
-                  <Text style={styles.statValue}>0</Text>
-                  <Text style={styles.statLabel}>Completed</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Performance Card */}
-            <View style={styles.performanceCard}>
-              <View style={styles.performanceHeader}>
-                <Text style={styles.performanceTitle}>Today&apos;s Performance</Text>
-                <View style={styles.dateBadge}>
-                  <FontAwesome6 name="calendar-day" size={12} color="#6B7280" />
-                  <Text style={styles.dateText}>Nov 3</Text>
-                </View>
-              </View>
-
-              <View style={styles.performanceGrid}>
-                <View style={styles.performanceItem}>
-                  <View style={styles.performanceIconBox}>
-                    <FontAwesome6 name="route" size={18} color="#FF6B35" />
+        <ScrollView style={{ flex: 1 }}>
+          <View style={styles.cards}>
+            <View
+              style={styles.dashboardScrollView}
+              // contentContainerStyle={styles.dashboardScrollContent}
+              // showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.cardsSection}>
+                {/* Quick Stats */}
+                <View style={styles.statsContainer}>
+                  <View style={styles.statCard}>
+                    <View style={styles.statIconContainer}>
+                      <FontAwesome6 name="truck-fast" size={24} color="#2196F3" />
+                    </View>
+                    <View style={styles.statContent}>
+                      <Text style={styles.statValue}>0</Text>
+                      <Text style={styles.statLabel}>Active Trips</Text>
+                    </View>
                   </View>
-                  <Text style={styles.performanceValue}>0 km</Text>
-                  <Text style={styles.performanceLabel}>Distance</Text>
-                </View>
 
-                <View style={styles.performanceDivider} />
-
-                <View style={styles.performanceItem}>
-                  <View style={[styles.performanceIconBox, { backgroundColor: '#FFF3E0' }]}>
-                    <FontAwesome6 name="clock" size={18} color="#FF9800" />
+                  <View style={styles.statCard}>
+                    <View style={[styles.statIconContainer, { backgroundColor: '#E8F5E9' }]}>
+                      <FontAwesome6 name="circle-check" size={24} color="#4CAF50" />
+                    </View>
+                    <View style={styles.statContent}>
+                      <Text style={styles.statValue}>0</Text>
+                      <Text style={styles.statLabel}>Completed</Text>
+                    </View>
                   </View>
-                  <Text style={styles.performanceValue}>0h</Text>
-                  <Text style={styles.performanceLabel}>Hours</Text>
                 </View>
 
-                <View style={styles.performanceDivider} />
-
-                <View style={styles.performanceItem}>
-                  <View style={[styles.performanceIconBox, { backgroundColor: '#E8F5E9' }]}>
-                    <FontAwesome6 name="box" size={18} color="#4CAF50" />
+                {/* Performance Card */}
+                <View style={styles.performanceCard}>
+                  <View style={styles.performanceHeader}>
+                    <Text style={styles.performanceTitle}>Today&apos;s Performance</Text>
+                    <View style={styles.dateBadge}>
+                      <FontAwesome6 name="calendar-day" size={12} color="#6B7280" />
+                      <Text style={styles.dateText}>Nov 3</Text>
+                    </View>
                   </View>
-                  <Text style={styles.performanceValue}>0</Text>
-                  <Text style={styles.performanceLabel}>Deliveries</Text>
-                </View>
-              </View>
-            </View>
 
-            {/* Quick Actions */}
-            <View style={styles.quickActionsContainer}>
-              <Text style={styles.sectionTitle}>Quick Actions</Text>
-              <View style={styles.quickActionsGrid}>
-                {menuCards.map(card => renderCard(card))}
+                  <View style={styles.performanceGrid}>
+                    <View style={styles.performanceItem}>
+                      <View style={styles.performanceIconBox}>
+                        <FontAwesome6 name="route" size={18} color="#FF6B35" />
+                      </View>
+                      <Text style={styles.performanceValue}>0 km</Text>
+                      <Text style={styles.performanceLabel}>Distance</Text>
+                    </View>
+
+                    <View style={styles.performanceDivider} />
+
+                    <View style={styles.performanceItem}>
+                      <View style={[styles.performanceIconBox, { backgroundColor: '#FFF3E0' }]}>
+                        <FontAwesome6 name="clock" size={18} color="#FF9800" />
+                      </View>
+                      <Text style={styles.performanceValue}>0h</Text>
+                      <Text style={styles.performanceLabel}>Hours</Text>
+                    </View>
+
+                    <View style={styles.performanceDivider} />
+
+                    <View style={styles.performanceItem}>
+                      <View style={[styles.performanceIconBox, { backgroundColor: '#E8F5E9' }]}>
+                        <FontAwesome6 name="box" size={18} color="#4CAF50" />
+                      </View>
+                      <Text style={styles.performanceValue}>0</Text>
+                      <Text style={styles.performanceLabel}>Deliveries</Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Quick Actions */}
+                <View style={styles.quickActionsContainer}>
+                  <Text style={styles.sectionTitle}>Quick Actions</Text>
+                  <View style={styles.quickActionsGrid}>
+                    {menuCards.map((card) => renderCard(card))}
+                  </View>
+                </View>
               </View>
             </View>
           </View>
-          
-          {/* Bottom spacing */}
-          <View style={{ height: 20 }} />
-        </View>
-        </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -472,7 +466,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     flex: 1,
     marginLeft: 8,
-
   },
   locationButton: {
     // padding: 4,
@@ -581,9 +574,9 @@ const styles = StyleSheet.create({
   },
   cards: {
     backgroundColor: '#f4f6fa',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingTop: 24,
+    // borderTopLeftRadius: 24,
+    // borderTopRightRadius: 24,
+    paddingTop: 16,
     paddingHorizontal: 16,
     height: '100%',
   },
@@ -591,9 +584,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#f4f6fa',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    // paddingTop: 24,
+    // paddingTop: 16,
     // paddingHorizontal: 16,
-    minHeight: 600,
+    // minHeight: 600,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -714,12 +707,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   quickActionsGrid: {
-    // chia thành 2 cột 
+    // chia thành 2 cột
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: 12,
-
   },
   card: {
     width: (width - 48) / 2 - 6, // Two cards per row with spacing
