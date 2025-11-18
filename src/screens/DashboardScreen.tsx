@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   RefreshControl,
   FlatList,
-  Alert,
 } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons';
 import ApiService from '../services/api';
@@ -20,7 +19,7 @@ const DashboardScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState<'all' | 'pending' | 'in-progress' >('all');
+  const [filter, setFilter] = useState<'all' | 'pending' | 'in-progress'>('all');
 
   useEffect(() => {
     loadTrips();
@@ -45,8 +44,6 @@ const DashboardScreen = ({ navigation }: any) => {
       setTrips(data);
     } catch (error: any) {
       console.error('Failed to load trips from API', error);
-
-      
     } finally {
       setLoading(false);
     }
@@ -62,23 +59,22 @@ const DashboardScreen = ({ navigation }: any) => {
     let result = [...trips];
 
     if (filter !== 'all') {
-      result = result.filter(trip => {
+      result = result.filter((trip) => {
         const status = trip.tripStatus?.toLowerCase() || '';
         if (filter === 'pending') return status === 'planned' || status === 'assigned';
-        if (filter === 'in-progress') return status !== 'assigned' ;
-       
+        if (filter === 'in-progress') return status !== 'assigned';
+
         return true;
       });
     }
 
     if (searchQuery) {
       result = result.filter(
-        trip =>
+        (trip) =>
           trip.customer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           trip.id?.toString().includes(searchQuery) ||
           trip.tripStartLocation?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          trip.tripEndLocation?.toLowerCase().includes(searchQuery.toLowerCase()) 
-          
+          trip.tripEndLocation?.toLowerCase().includes(searchQuery.toLowerCase()),
       );
     }
 
@@ -98,85 +94,102 @@ const DashboardScreen = ({ navigation }: any) => {
     <TouchableOpacity
       style={styles.tripCard}
       onPress={() => {
-      if (item.tripStatus?.toLowerCase() !== 'assigned') {
-        navigation.navigate('TripDetail', { trip: item });
-      }
+        if (item.tripStatus?.toLowerCase() !== 'assigned') {
+          navigation.navigate('TripDetail', { trip: item });
+        }
       }}
       activeOpacity={item.tripStatus?.toLowerCase() === 'assigned' ? 1 : 0.7}
       disabled={item.tripStatus?.toLowerCase() === 'assigned'}>
       <View style={styles.cardHeader}>
-        <View >
-        <Text style={{color: '#042f40', fontSize: 16, fontWeight: 'bold'}}>#{ item.id}</Text>
-      </View>
-      <View style={[styles.badge, { backgroundColor: getStatusColor(item.tripStatus) }]}>
-        <Text style={styles.badgeText}>{item.tripStatus?.toUpperCase() === 'ASSIGNED' ? 'UP COMMING' : item.tripStatus?.toUpperCase()}</Text>
-      </View>
-      
-      
+        <View>
+          <Text style={{ color: '#042f40', fontSize: 16, fontWeight: 'bold' }}>#{item.id}</Text>
+        </View>
+        <View style={[styles.badge, { backgroundColor: getStatusColor(item.tripStatus) }]}>
+          <Text style={styles.badgeText}>
+            {item.tripStatus?.toUpperCase() === 'ASSIGNED'
+              ? 'UP COMMING'
+              : item.tripStatus?.toUpperCase()}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.routeContainer}>
-      <View style={styles.locationRow}>
-        <FontAwesome6 name="location-dot" size={20} color="#042f40" style={styles.locationIcon} />
-        <View style={styles.locationInfo}>
-        <Text style={styles.locationLabel}>From</Text>
-        <Text style={styles.locationTitle}>{item.tripNameStartLocation}</Text>
-        <Text style={styles.infoText}>Appt #: {`${item.tripStart ? new Date(item.tripStart).toLocaleDateString('us-Us',{
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                 }) : 'N/A'} `}</Text>
-        <Text style={styles.locationText}>{item.tripStartLocation || 'N/A'}</Text>
+        <View style={styles.locationRow}>
+          <FontAwesome6 name="location-dot" size={20} color="#042f40" style={styles.locationIcon} />
+          <View style={styles.locationInfo}>
+            <Text style={styles.locationLabel}>From</Text>
+            <Text style={styles.locationTitle}>{item.tripNameStartLocation}</Text>
+            <Text style={styles.infoText}>
+              Appt #:{' '}
+              {`${
+                item.tripStart
+                  ? new Date(item.tripStart).toLocaleDateString('us-Us', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+                  : 'N/A'
+              } `}
+            </Text>
+            <Text style={styles.locationText}>{item.tripStartLocation ?? 'N/A'}</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.arrowContainer}>
-     <FontAwesome6 name="arrow-down" size={18} color="#042f40" />
-        
-       
-      </View>
-
-      <View style={styles.locationRow}>
-        <FontAwesome6 name="location-dot" size={20} color="#F44336" style={styles.locationIcon} />
-        <View style={styles.locationInfo}>
-        <Text style={styles.locationLabel}>To</Text>
-         <Text style={styles.locationTitle}>{item.tripNameEndLocation}</Text>
-                 <Text style={styles.infoText}>Appt #: {`${item.tripEnd ? new Date(item.tripEnd).toLocaleDateString('us-Us',{
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                 }) : 'N/A'} `}</Text>
-
-        <Text style={styles.locationText}>{item.tripEndLocation || 'N/A'}</Text>
+        <View style={styles.arrowContainer}>
+          <FontAwesome6 name="arrow-down" size={18} color="#042f40" />
         </View>
-      </View>
+
+        <View style={styles.locationRow}>
+          <FontAwesome6 name="location-dot" size={20} color="#F44336" style={styles.locationIcon} />
+          <View style={styles.locationInfo}>
+            <Text style={styles.locationLabel}>To</Text>
+            <Text style={styles.locationTitle}>{item.tripNameEndLocation}</Text>
+            <Text style={styles.infoText}>
+              Appt #:{' '}
+              {`${
+                item.tripEnd
+                  ? new Date(item.tripEnd).toLocaleDateString('us-Us', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+                  : 'N/A'
+              } `}
+            </Text>
+            <Text style={styles.locationText}>{item.tripEndLocation ?? 'N/A'}</Text>
+          </View>
+        </View>
       </View>
 
       <View style={styles.cardFooter}>
-      <View style={styles.footerRow}>
-        <View style={styles.infoItem}>
-        <FontAwesome6 name="user" size={16} color="#6B7280" />
-        <Text style={styles.infoText} numberOfLines={1}>{item.customer || item.driver || 'N/A'}</Text>
+        <View style={styles.footerRow}>
+          <View style={styles.infoItem}>
+            <FontAwesome6 name="user" size={16} color="#6B7280" />
+            <Text style={styles.infoText} numberOfLines={1}>
+              {item.customer ?? 'N/A'}
+            </Text>
+          </View>
+          <View style={styles.infoItem}>
+            <FontAwesome6 name="truck" size={16} color="#6B7280" />
+            <Text style={styles.infoText}>{item.vehicle ?? 'N/A'}</Text>
+          </View>
         </View>
-        <View style={styles.infoItem}>
-        <FontAwesome6 name="truck" size={16} color="#6B7280" />
-        <Text style={styles.infoText}>{item.vehicle || 'N/A'}</Text>
+        <View style={styles.footerRow}>
+          <View style={styles.infoItem}>
+            <FontAwesome6 name="user-tie" size={16} color="#6B7280" />
+            <Text style={styles.infoText}>{item.dispatcher ?? 'N/A'}</Text>
+          </View>
+          <View style={styles.infoItem}>
+            <FontAwesome6 name="trailer" size={16} color="#6B7280" />
+            <Text style={styles.infoText}>
+              {item.trailer?.replace(/\s*Mounted\s+.*/i, '') ?? 'N/A'}
+            </Text>
+          </View>
         </View>
-      </View>
-      <View style={styles.footerRow}>
-        <View style={styles.infoItem}>
-        <FontAwesome6 name="user-tie" size={16} color="#6B7280" />
-        <Text style={styles.infoText}>{item.dispatcher ? item.dispatcher : 'N/A'}</Text>
-        </View>
-        <View style={styles.infoItem}>
-        <FontAwesome6 name="trailer" size={16} color="#6B7280" />
-        <Text style={styles.infoText}>{item.trailer?.replace(/\s*Mounted\s+.*/i, '') || 'N/A'} </Text>
-        </View>
-      </View>
       </View>
     </TouchableOpacity>
   );
@@ -185,7 +198,7 @@ const DashboardScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       {/* Custom Header with Back Button */}
       <View style={styles.customHeader}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => {
             if (navigation.canGoBack()) {
@@ -200,7 +213,12 @@ const DashboardScreen = ({ navigation }: any) => {
 
       <View style={styles.header}>
         <View style={styles.searchContainer}>
-          <FontAwesome6 name="magnifying-glass" size={20} color="#9CA3AF" style={styles.searchIcon} />
+          <FontAwesome6
+            name="magnifying-glass"
+            size={20}
+            color="#9CA3AF"
+            style={styles.searchIcon}
+          />
           <TextInput
             style={styles.searchInput}
             placeholder="Search trips..."
@@ -231,7 +249,6 @@ const DashboardScreen = ({ navigation }: any) => {
               Active
             </Text>
           </TouchableOpacity>
-         
         </View>
       </View>
 
@@ -240,9 +257,7 @@ const DashboardScreen = ({ navigation }: any) => {
         renderItem={renderTripCard}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         ListEmptyComponent={
           loading ? (
             <View style={styles.loadingContainer}>
@@ -260,9 +275,6 @@ const DashboardScreen = ({ navigation }: any) => {
     </View>
   );
 };
-
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -443,7 +455,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     maxWidth: 180,
-    
   },
   emptyContainer: {
     alignItems: 'center',

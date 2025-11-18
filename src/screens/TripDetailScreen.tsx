@@ -41,13 +41,11 @@ const TripDetailScreen = ({ route, navigation }: any) => {
     try {
       setRefreshing(true);
       const trips = await ApiService.getTrips();
-      const updatedTrip = trips.find(t => t.id === trip.id);
+      const updatedTrip = trips.find((t) => t.id === trip.id);
       if (updatedTrip) {
-        
         setTrip(updatedTrip);
       }
       await loadRouteDetails();
-    
     } catch (error) {
       console.error('Error refreshing:', error);
     } finally {
@@ -79,7 +77,6 @@ const TripDetailScreen = ({ route, navigation }: any) => {
       if (action === 'arrive') {
         await ApiService.updateArriveStatus(stop.id, true);
         Alert.alert('Success', `Arrived at ${stop.businessName}`);
-      
       } else {
         await ApiService.updateDepartStatus(stop.id, true);
         Alert.alert('Success', `Departed from ${stop.businessName}`);
@@ -95,7 +92,8 @@ const TripDetailScreen = ({ route, navigation }: any) => {
   const getStatusColor = (status: string) => {
     const upperStatus = status.toUpperCase();
     if (upperStatus.startsWith('PENDING')) return '#FF9800';
-    if (upperStatus.startsWith('IN-PROGRESS') || upperStatus.startsWith('IN PROGRESS')) return '#042f40';
+    if (upperStatus.startsWith('IN-PROGRESS') || upperStatus.startsWith('IN PROGRESS'))
+      return '#042f40';
     if (upperStatus.startsWith('ARRIVED')) return '#9C27B0';
     if (upperStatus.startsWith('DEPARTED')) return '#00BCD4';
     if (upperStatus.startsWith('COMPLETED')) return '#4CAF50';
@@ -149,8 +147,6 @@ const TripDetailScreen = ({ route, navigation }: any) => {
         {/* Status Indicator Line */}
         <View style={[styles.statusLine, { backgroundColor: statusStyle.text }]} />
 
-        
-
         {/* Activity Header with Icon */}
         <View style={[styles.activityHeader, { backgroundColor: getActivityColor() + '15' }]}>
           <View style={[styles.activityIconContainer, { backgroundColor: getActivityColor() }]}>
@@ -182,7 +178,9 @@ const TripDetailScreen = ({ route, navigation }: any) => {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.addressTextNew}>{stop.address}</Text>
-              <Text style={styles.cityStateNew}>{stop.city}, {stop.state}</Text>
+              <Text style={styles.cityStateNew}>
+                {stop.city}, {stop.state}
+              </Text>
             </View>
           </View>
         </View>
@@ -195,13 +193,15 @@ const TripDetailScreen = ({ route, navigation }: any) => {
             <View style={styles.timelineContent}>
               <Text style={styles.timelineLabel}>Appointment : </Text>
               <Text style={styles.timelineValue}>
-                {stop.startedDate ? new Date(stop.startedDate).toLocaleString('us-US', { 
-                   hour: '2-digit',
-                  minute: '2-digit',
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric'
-                }) : 'N/A'}
+                {stop.startedDate
+                  ? new Date(stop.startedDate).toLocaleString('us-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      day: '2-digit',
+                      month: '2-digit',
+                      year: 'numeric',
+                    })
+                  : 'N/A'}
               </Text>
             </View>
           </View>
@@ -215,7 +215,12 @@ const TripDetailScreen = ({ route, navigation }: any) => {
               <View style={styles.timelineContent}>
                 <Text style={styles.timelineLabel}>Arrived</Text>
                 <Text style={[styles.timelineValue, { color: '#4CAF50', fontWeight: '700' }]}>
-                  {stop.arrive ? new Date(stop.arrive).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
+                  {stop.arrive
+                    ? new Date(stop.arrive).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : '-'}
                 </Text>
               </View>
             </View>
@@ -230,7 +235,12 @@ const TripDetailScreen = ({ route, navigation }: any) => {
               <View style={styles.timelineContent}>
                 <Text style={styles.timelineLabel}>Departed</Text>
                 <Text style={[styles.timelineValue, { color: '#4CAF50', fontWeight: '700' }]}>
-                  {stop.depart ? new Date(stop.depart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
+                  {stop.depart
+                    ? new Date(stop.depart).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : '-'}
                 </Text>
               </View>
             </View>
@@ -261,77 +271,77 @@ const TripDetailScreen = ({ route, navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView 
+      <ScrollView
         style={styles.scrollContainer}
         contentContainerStyle={{ paddingBottom: nextAction && !allStopsCompleted ? 100 : 20 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={refreshTripData} />
-        }>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshTripData} />}>
         <View style={styles.content}>
-        {/* Trip Header Card */}
-        <View style={styles.card}>
-          <View style={styles.header}>
-            <Text style={styles.tripId}>Trip #{trip.id}</Text>
-            <View style={[styles.statusTrip, { backgroundColor: getStatusColor(trip.tripStatus) }]}>
-              <Text style={{
-                color : '#fff',
-                fontWeight: 'bold',
-              }}>{trip.tripStatus.toUpperCase()}</Text>
+          {/* Trip Header Card */}
+          <View style={styles.card}>
+            <View style={styles.header}>
+              <Text style={styles.tripId}>Trip #{trip.id}</Text>
+              <View
+                style={[styles.statusTrip, { backgroundColor: getStatusColor(trip.tripStatus) }]}>
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontWeight: 'bold',
+                  }}>
+                  {trip.tripStatus.toUpperCase()}
+                </Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Customer</Text>
-            <Text style={styles.detailValue}>{trip.customer}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Dispatcher</Text>
-            <Text style={styles.detailValue}>{trip.dispatcher || 'N/A'}</Text>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Customer</Text>
+              <Text style={styles.detailValue}>{trip.customer}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Dispatcher</Text>
+              <Text style={styles.detailValue}>{trip.dispatcher || 'N/A'}</Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Vehicle</Text>
+              <Text style={styles.detailValue}>{trip.vehicle || 'N/A'}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Trailer & Chassis</Text>
+              <Text style={styles.detailValue}>
+                {trip.trailer?.replace(/\s*Mounted\s+.*/i, '') || 'N/A'}
+              </Text>
+            </View>
+
+            {trip.customerContact && (
+              <TouchableOpacity style={styles.callButton} onPress={callCustomer}>
+                <Ionicons name="call" size={18} color="#042f40" />
+                <Text style={styles.callButtonText}>Call Customer</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Vehicle</Text>
-            <Text style={styles.detailValue}>{trip.vehicle || 'N/A'}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Trailer && Chassis</Text>
-            <Text style={styles.detailValue}>{trip.trailer?.replace(/\s*Mounted\s+.*/i, '') || 'N/A'}</Text>
+          {/* Route Stops Section */}
+          <View style={styles.sectionHeader}>
+            <Ionicons name="map-outline" size={24} color="#042f40" />
+            <Text style={styles.sectionHeaderText}>Route Stops</Text>
           </View>
 
-         
+          {loading && routeDetails.length === 0 ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#042f40" />
+              <Text style={styles.loadingText}>Loading route details...</Text>
+            </View>
+          ) : (
+            <>{routeDetails.map((stop, index) => renderStopCard(stop, index))}</>
+          )}
 
-          {trip.customerContact && (
-            <TouchableOpacity style={styles.callButton} onPress={callCustomer}>
-              <Ionicons name="call" size={18} color="#042f40" />
-              <Text style={styles.callButtonText}>Call Customer</Text>
-            </TouchableOpacity>
+          {allStopsCompleted && (
+            <View style={styles.completedContainer}>
+              <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
+              <Text style={styles.completedTitle}>All Stops Completed!</Text>
+              <Text style={styles.completedSubtitle}>Great job! This trip is finished.</Text>
+            </View>
           )}
         </View>
-
-        {/* Route Stops Section */}
-        <View style={styles.sectionHeader}>
-          <Ionicons name="map-outline" size={24} color="#042f40" />
-          <Text style={styles.sectionHeaderText}>Route Stops</Text>
-        </View>
-
-        {loading && routeDetails.length === 0 ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#042f40" />
-            <Text style={styles.loadingText}>Loading route details...</Text>
-          </View>
-        ) : (
-          <>
-            {routeDetails.map((stop, index) => renderStopCard(stop, index))}
-          </>
-        )}
-
-        {allStopsCompleted && (
-          <View style={styles.completedContainer}>
-            <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
-            <Text style={styles.completedTitle}>All Stops Completed!</Text>
-            <Text style={styles.completedSubtitle}>Great job! This trip is finished.</Text>
-          </View>
-        )}
-      </View>
       </ScrollView>
 
       {/* Bottom Fixed Action Button */}
@@ -340,7 +350,7 @@ const TripDetailScreen = ({ route, navigation }: any) => {
           <TouchableOpacity
             style={[
               styles.bottomButton,
-              { backgroundColor: nextAction.action === 'arrive' ? '#042f40' : '#FF9800' }
+              { backgroundColor: nextAction.action === 'arrive' ? '#042f40' : '#FF9800' },
             ]}
             onPress={handleBottomButtonPress}
             disabled={loading}>
@@ -348,10 +358,10 @@ const TripDetailScreen = ({ route, navigation }: any) => {
               <ActivityIndicator color="#fff" size="small" />
             ) : (
               <>
-                <Ionicons 
-                  name={nextAction.action === 'arrive' ? 'log-in-outline' : 'log-out-outline'} 
-                  size={24} 
-                  color="#fff" 
+                <Ionicons
+                  name={nextAction.action === 'arrive' ? 'log-in-outline' : 'log-out-outline'}
+                  size={24}
+                  color="#fff"
                 />
                 <View style={styles.bottomButtonTextContainer}>
                   <Text style={styles.bottomButtonTitle}>
@@ -651,9 +661,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#4CAF50',
   },
-  statusTrip: { paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 12,},
+  statusTrip: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 },
   statusBadge: {
     paddingHorizontal: 10,
     paddingVertical: 5,
