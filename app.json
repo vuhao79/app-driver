@@ -2,7 +2,7 @@
   "expo": {
     "name": "Acexus Driver",
     "slug": "DriverTripExpo",
-    "version": "1.0.1",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -22,7 +22,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.acexus.driver"
+      "package": "com.acexus.driver",
+      "versionCode": 6
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +33,17 @@
         "projectId": "60a831fd-0cf0-42a5-b790-e36b39c4c986"
       }
     },
-    "owner": "haonguyen"
+    "owner": "haonguyen",
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ]
+
   }
 }
