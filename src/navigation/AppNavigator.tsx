@@ -8,6 +8,7 @@ import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import LocationPermissionScreen from '../screens/LocationPermissionScreen';
 import MainNavigator from './MainNavigator';
+import { StatusBar } from 'expo-status-bar';
 
 const Stack = createStackNavigator();
 
@@ -42,27 +43,27 @@ const AppNavigator = () => {
   }
 
   return (
-     <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {!isAuthenticated ? (
-            <>
-              <Stack.Screen name="Welcome" component={WelcomeScreen} />
-              <Stack.Screen name="Login" component={LoginScreen} />
-            </>
-          ) : (
-            <>
-              {locationEnabled !== 'true' && locationEnabled !== 'skipped' && (
-                <Stack.Screen
-                  name="LocationPermission"
-                  component={LocationPermissionScreen}
-                  options={{ gestureEnabled: false }}
-                />
-              )}
-              <Stack.Screen name="Main" component={MainNavigator} />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isAuthenticated ? (
+          <>
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+          </>
+        ) : (
+          <>
+            {locationEnabled !== 'true' && locationEnabled !== 'skipped' && (
+              <Stack.Screen
+                name="LocationPermission"
+                component={LocationPermissionScreen}
+                options={{ gestureEnabled: false }}
+              />
+            )}
+            <Stack.Screen name="Main" component={MainNavigator} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 

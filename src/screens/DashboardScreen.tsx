@@ -9,6 +9,7 @@ import {
   RefreshControl,
   FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome6 } from '@expo/vector-icons';
 import ApiService from '../services/api';
 import { Trip } from '../types';
@@ -193,86 +194,72 @@ const DashboardScreen = ({ navigation }: any) => {
       </View>
     </TouchableOpacity>
   );
-
   return (
-    <View style={styles.container}>
-      {/* Custom Header with Back Button */}
-      <View style={styles.customHeader}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => {
-            if (navigation.canGoBack()) {
-              navigation.goBack();
-            }
-          }}>
-          <FontAwesome6 name="arrow-left" size={24} color="#1F2937" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>My Trips</Text>
-        <View style={styles.headerRightSpace} />
-      </View>
-
-      <View style={styles.header}>
-        <View style={styles.searchContainer}>
-          <FontAwesome6
-            name="magnifying-glass"
-            size={20}
-            color="#9CA3AF"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search trips..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+    <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.searchContainer}>
+            <FontAwesome6
+              name="magnifying-glass"
+              size={20}
+              color="#9CA3AF"
+              style={styles.searchIcon}
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search trips..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+          <View style={styles.filterContainer}>
+            <TouchableOpacity
+              style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]}
+              onPress={() => setFilter('all')}>
+              <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
+                All
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterButton, filter === 'pending' && styles.filterButtonActive]}
+              onPress={() => setFilter('pending')}>
+              <Text style={[styles.filterText, filter === 'pending' && styles.filterTextActive]}>
+                Pending
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.filterButton, filter === 'in-progress' && styles.filterButtonActive]}
+              onPress={() => setFilter('in-progress')}>
+              <Text
+                style={[styles.filterText, filter === 'in-progress' && styles.filterTextActive]}>
+                Active
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.filterContainer}>
-          <TouchableOpacity
-            style={[styles.filterButton, filter === 'all' && styles.filterButtonActive]}
-            onPress={() => setFilter('all')}>
-            <Text style={[styles.filterText, filter === 'all' && styles.filterTextActive]}>
-              All
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.filterButton, filter === 'pending' && styles.filterButtonActive]}
-            onPress={() => setFilter('pending')}>
-            <Text style={[styles.filterText, filter === 'pending' && styles.filterTextActive]}>
-              Pending
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.filterButton, filter === 'in-progress' && styles.filterButtonActive]}
-            onPress={() => setFilter('in-progress')}>
-            <Text style={[styles.filterText, filter === 'in-progress' && styles.filterTextActive]}>
-              Active
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <FlatList
+          data={filteredTrips}
+          renderItem={renderTripCard}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.listContent}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          ListEmptyComponent={
+            loading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#042f40" />
+                <Text style={styles.loadingText}>Loading trips...</Text>
+              </View>
+            ) : (
+              <View style={styles.emptyContainer}>
+                <FontAwesome6 name="map-location" size={64} color="#D1D5DB" />
+                <Text style={styles.emptyText}>No trips found</Text>
+              </View>
+            )
+          }
+        />
       </View>
-
-      <FlatList
-        data={filteredTrips}
-        renderItem={renderTripCard}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        ListEmptyComponent={
-          loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#042f40" />
-              <Text style={styles.loadingText}>Loading trips...</Text>
-            </View>
-          ) : (
-            <View style={styles.emptyContainer}>
-              <FontAwesome6 name="map-location" size={64} color="#D1D5DB" />
-              <Text style={styles.emptyText}>No trips found</Text>
-            </View>
-          )
-        }
-      />
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -296,8 +283,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-    paddingTop: 48,
-    paddingBottom: 12,
+    // paddingTop: 48,
+    // paddingBottom: 12,
     paddingHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

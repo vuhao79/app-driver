@@ -209,110 +209,110 @@ const HomeScreen = ({ navigation }: any) => {
   );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <ScrollView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
 
-      {/* Background Image - Fixed Header */}
-      <ImageBackground
-        source={require('../../assets/truck-welcome.jpg')}
-        style={styles.backgroundImage}
-        imageStyle={styles.backgroundImageStyle}>
-        <View style={styles.backgroundOverlay}>
-          {/* Header Section - Fixed */}
-          <View style={styles.headerSection}>
-            {/* Status Bar */}
-            <View style={styles.statusBar}>
-              <Text style={styles.time}></Text>
-              <View style={styles.rightIcons} />
-            </View>
-
-            {/* Location */}
-            <View style={styles.locationContainer}>
-              <Text style={styles.locationLabel}>Current Address</Text>
-              <View style={styles.locationRow}>
-                {loadingLocation ? (
-                  <View style={styles.loadingLocationContainer}>
-                    <ActivityIndicator size="small" color="#fff" />
-                    <Text style={styles.loadingLocationText}>Getting location...</Text>
-                  </View>
-                ) : (
-                  <>
-                    <TouchableOpacity style={styles.locationButton} onPress={handleLocationPress}>
-                      <FontAwesome6 name="location-dot" size={20} color="#fff" />
-                    </TouchableOpacity>
-                    <Text style={styles.locationText} numberOfLines={1}>
-                      {location}
-                    </Text>
-                  </>
-                )}
+        {/* Background Image - Fixed Header */}
+        <ImageBackground
+          source={require('../../assets/truck-welcome.jpg')}
+          style={styles.backgroundImage}
+          imageStyle={styles.backgroundImageStyle}>
+          <View style={styles.backgroundOverlay}>
+            {/* Header Section - Fixed */}
+            <View style={styles.headerSection}>
+              {/* Status Bar */}
+              <View style={styles.statusBar}>
+                <Text style={styles.time}></Text>
+                <View style={styles.rightIcons} />
               </View>
-            </View>
 
-            {/* Welcome Section */}
-            <View style={styles.welcomeSection}>
-              <View style={styles.welcomeContent}>
-                <View style={styles.welcomeTextContainer}>
-                  <Text style={styles.welcomeText}>WELCOME</Text>
-                  <Text style={styles.driverName}>
-                    {user ? user.firstName + ' ' + user.lastName : 'Guest'}
-                  </Text>
-                  <Text style={styles.driverInfo}>Email: {user?.email || 'N/A'}</Text>
-                  <Text style={styles.driverInfo}>Vehicle Number: N/A</Text>
+              {/* Location */}
+              <View style={styles.locationContainer}>
+                <Text style={styles.locationLabel}>Current Address</Text>
+                <View style={styles.locationRow}>
+                  {loadingLocation ? (
+                    <View style={styles.loadingLocationContainer}>
+                      <ActivityIndicator size="small" color="#fff" />
+                      <Text style={styles.loadingLocationText}>Getting location...</Text>
+                    </View>
+                  ) : (
+                    <>
+                      <TouchableOpacity style={styles.locationButton} onPress={handleLocationPress}>
+                        <FontAwesome6 name="location-dot" size={20} color="#fff" />
+                      </TouchableOpacity>
+                      <Text style={styles.locationText} numberOfLines={1}>
+                        {location}
+                      </Text>
+                    </>
+                  )}
                 </View>
+              </View>
 
-                {/* Animated Avatar */}
-                <Animated.View
-                  style={[
-                    styles.avatarContainer,
-                    {
-                      transform: [
-                        { scale: scaleAnim },
-                        {
-                          rotate: rotateAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: ['0deg', '5deg'],
-                          }),
-                        },
-                      ],
-                    },
-                  ]}>
+              {/* Welcome Section */}
+              <View style={styles.welcomeSection}>
+                <View style={styles.welcomeContent}>
+                  <View style={styles.welcomeTextContainer}>
+                    <Text style={styles.welcomeText}>WELCOME</Text>
+                    <Text style={styles.driverName}>
+                      {user ? user.firstName + ' ' + user.lastName : 'Guest'}
+                    </Text>
+                    <Text style={styles.driverInfo}>Email: {user?.email || 'N/A'}</Text>
+                    <Text style={styles.driverInfo}>Vehicle Number: N/A</Text>
+                  </View>
+
+                  {/* Animated Avatar */}
                   <Animated.View
                     style={[
-                      styles.avatarBorder,
+                      styles.avatarContainer,
                       {
-                        transform: [{ scale: pulseAnim }],
+                        transform: [
+                          { scale: scaleAnim },
+                          {
+                            rotate: rotateAnim.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: ['0deg', '5deg'],
+                            }),
+                          },
+                        ],
                       },
                     ]}>
-                    {user?.avatar ? (
-                      <Image
-                        source={{
-                          uri: `http://api.test.acexustrans.com/upload/User_Avatar/${user.avatar}`,
-                        }}
-                        style={styles.avatarImage}
-                      />
-                    ) : (
-                      <View style={styles.avatarPlaceholder}>
-                        <Text style={styles.avatarInitials}>
-                          {user?.firstName?.[0] || 'G'}
-                          {user?.lastName?.[0] || 'N'}
-                        </Text>
+                    <Animated.View
+                      style={[
+                        styles.avatarBorder,
+                        {
+                          transform: [{ scale: pulseAnim }],
+                        },
+                      ]}>
+                      {user?.avatar ? (
+                        <Image
+                          source={{
+                            uri: `http://api.test.acexustrans.com/upload/User_Avatar/${user.avatar}`,
+                          }}
+                          style={styles.avatarImage}
+                        />
+                      ) : (
+                        <View style={styles.avatarPlaceholder}>
+                          <Text style={styles.avatarInitials}>
+                            {user?.firstName?.[0] || 'G'}
+                            {user?.lastName?.[0] || 'N'}
+                          </Text>
+                        </View>
+                      )}
+                      {/* Online Status Indicator */}
+                      <View style={styles.onlineIndicator}>
+                        <View style={styles.onlineDot} />
                       </View>
-                    )}
-                    {/* Online Status Indicator */}
-                    <View style={styles.onlineIndicator}>
-                      <View style={styles.onlineDot} />
-                    </View>
+                    </Animated.View>
                   </Animated.View>
-                </Animated.View>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ImageBackground>
+        </ImageBackground>
 
-      {/* Dashboard Section - Scrollable */}
-      <View style={styles.dashboardContainer}>
-        <ScrollView style={{ flex: 1 }}>
+        {/* Dashboard Section - Scrollable */}
+        <View style={styles.dashboardContainer}>
           <View style={styles.cards}>
             <View
               style={styles.dashboardScrollView}
@@ -394,9 +394,9 @@ const HomeScreen = ({ navigation }: any) => {
               </View>
             </View>
           </View>
-        </ScrollView>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

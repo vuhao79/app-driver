@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import ApiService from '../services/api';
 import { Trip, TripRouteDetail } from '../types';
@@ -270,114 +271,116 @@ const TripDetailScreen = ({ route, navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollContainer}
-        contentContainerStyle={{ paddingBottom: nextAction && !allStopsCompleted ? 100 : 20 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshTripData} />}>
-        <View style={styles.content}>
-          {/* Trip Header Card */}
-          <View style={styles.card}>
-            <View style={styles.header}>
-              <Text style={styles.tripId}>Trip #{trip.id}</Text>
-              <View
-                style={[styles.statusTrip, { backgroundColor: getStatusColor(trip.tripStatus) }]}>
-                <Text
-                  style={{
-                    color: '#fff',
-                    fontWeight: 'bold',
-                  }}>
-                  {trip.tripStatus.toUpperCase()}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Customer</Text>
-              <Text style={styles.detailValue}>{trip.customer}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Dispatcher</Text>
-              <Text style={styles.detailValue}>{trip.dispatcher || 'N/A'}</Text>
-            </View>
-
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Vehicle</Text>
-              <Text style={styles.detailValue}>{trip.vehicle || 'N/A'}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Trailer & Chassis</Text>
-              <Text style={styles.detailValue}>
-                {trip.trailer?.replace(/\s*Mounted\s+.*/i, '') || 'N/A'}
-              </Text>
-            </View>
-
-            {trip.customerContact && (
-              <TouchableOpacity style={styles.callButton} onPress={callCustomer}>
-                <Ionicons name="call" size={18} color="#042f40" />
-                <Text style={styles.callButtonText}>Call Customer</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {/* Route Stops Section */}
-          <View style={styles.sectionHeader}>
-            <Ionicons name="map-outline" size={24} color="#042f40" />
-            <Text style={styles.sectionHeaderText}>Route Stops</Text>
-          </View>
-
-          {loading && routeDetails.length === 0 ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#042f40" />
-              <Text style={styles.loadingText}>Loading route details...</Text>
-            </View>
-          ) : (
-            <>{routeDetails.map((stop, index) => renderStopCard(stop, index))}</>
-          )}
-
-          {allStopsCompleted && (
-            <View style={styles.completedContainer}>
-              <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
-              <Text style={styles.completedTitle}>All Stops Completed!</Text>
-              <Text style={styles.completedSubtitle}>Great job! This trip is finished.</Text>
-            </View>
-          )}
-        </View>
-      </ScrollView>
-
-      {/* Bottom Fixed Action Button */}
-      {nextAction && !allStopsCompleted && trip.tripStatus.toUpperCase() !== 'ASSIGNED' && (
-        <View style={styles.bottomButtonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.bottomButton,
-              { backgroundColor: nextAction.action === 'arrive' ? '#042f40' : '#FF9800' },
-            ]}
-            onPress={handleBottomButtonPress}
-            disabled={loading}>
-            {loading ? (
-              <ActivityIndicator color="#fff" size="small" />
-            ) : (
-              <>
-                <Ionicons
-                  name={nextAction.action === 'arrive' ? 'log-in-outline' : 'log-out-outline'}
-                  size={24}
-                  color="#fff"
-                />
-                <View style={styles.bottomButtonTextContainer}>
-                  <Text style={styles.bottomButtonTitle}>
-                    {nextAction.action === 'arrive' ? 'Check In (Arrive)' : 'Check Out (Depart)'}
-                  </Text>
-                  <Text style={styles.bottomButtonSubtitle}>
-                    Stop {nextAction.stop.no}: {nextAction.stop.businessName}
+    <SafeAreaView edges={['bottom']} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <ScrollView
+          style={styles.scrollContainer}
+          contentContainerStyle={{ paddingBottom: nextAction && !allStopsCompleted ? 100 : 20 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refreshTripData} />}>
+          <View style={styles.content}>
+            {/* Trip Header Card */}
+            <View style={styles.card}>
+              <View style={styles.header}>
+                <Text style={styles.tripId}>Trip #{trip.id}</Text>
+                <View
+                  style={[styles.statusTrip, { backgroundColor: getStatusColor(trip.tripStatus) }]}>
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontWeight: 'bold',
+                    }}>
+                    {trip.tripStatus.toUpperCase()}
                   </Text>
                 </View>
-                <Ionicons name="chevron-forward" size={24} color="#fff" />
-              </>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Customer</Text>
+                <Text style={styles.detailValue}>{trip.customer}</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Dispatcher</Text>
+                <Text style={styles.detailValue}>{trip.dispatcher || 'N/A'}</Text>
+              </View>
+
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Vehicle</Text>
+                <Text style={styles.detailValue}>{trip.vehicle || 'N/A'}</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Trailer & Chassis</Text>
+                <Text style={styles.detailValue}>
+                  {trip.trailer?.replace(/\s*Mounted\s+.*/i, '') || 'N/A'}
+                </Text>
+              </View>
+
+              {trip.customerContact && (
+                <TouchableOpacity style={styles.callButton} onPress={callCustomer}>
+                  <Ionicons name="call" size={18} color="#042f40" />
+                  <Text style={styles.callButtonText}>Call Customer</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {/* Route Stops Section */}
+            <View style={styles.sectionHeader}>
+              <Ionicons name="map-outline" size={24} color="#042f40" />
+              <Text style={styles.sectionHeaderText}>Route Stops</Text>
+            </View>
+
+            {loading && routeDetails.length === 0 ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#042f40" />
+                <Text style={styles.loadingText}>Loading route details...</Text>
+              </View>
+            ) : (
+              <>{routeDetails.map((stop, index) => renderStopCard(stop, index))}</>
             )}
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+
+            {allStopsCompleted && (
+              <View style={styles.completedContainer}>
+                <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
+                <Text style={styles.completedTitle}>All Stops Completed!</Text>
+                <Text style={styles.completedSubtitle}>Great job! This trip is finished.</Text>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+
+        {/* Bottom Fixed Action Button */}
+        {nextAction && !allStopsCompleted && trip.tripStatus.toUpperCase() !== 'ASSIGNED' && (
+          <View style={styles.bottomButtonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.bottomButton,
+                { backgroundColor: nextAction.action === 'arrive' ? '#042f40' : '#FF9800' },
+              ]}
+              onPress={handleBottomButtonPress}
+              disabled={loading}>
+              {loading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <>
+                  <Ionicons
+                    name={nextAction.action === 'arrive' ? 'log-in-outline' : 'log-out-outline'}
+                    size={24}
+                    color="#fff"
+                  />
+                  <View style={styles.bottomButtonTextContainer}>
+                    <Text style={styles.bottomButtonTitle}>
+                      {nextAction.action === 'arrive' ? 'Check In (Arrive)' : 'Check Out (Depart)'}
+                    </Text>
+                    <Text style={styles.bottomButtonSubtitle}>
+                      Stop {nextAction.stop.no}: {nextAction.stop.businessName}
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={24} color="#fff" />
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -756,12 +759,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    paddingBottom: 24,
+    backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 8,
