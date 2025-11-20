@@ -95,7 +95,7 @@ const MainNavigator = () => {
           headerShown: true,
           title: 'My Trips',
           headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: '#0da4ff' },
+          headerStyle: { backgroundColor: '#2a7cd1' },
           headerTintColor: '#fff',
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           transitionSpec: {
@@ -121,7 +121,7 @@ const MainNavigator = () => {
           headerShown: true,
           title: 'Trip Details',
           headerTitleAlign: 'center',
-          headerStyle: { backgroundColor: '#0da4ff' },
+          headerStyle: { backgroundColor: '#2a7cd1' },
           headerTintColor: '#fff',
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           transitionSpec: {

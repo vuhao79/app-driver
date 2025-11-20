@@ -10,7 +10,7 @@ import {
   FlatList,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import ApiService from '../services/api';
 import { Trip } from '../types';
 
@@ -259,11 +259,25 @@ const DashboardScreen = ({ navigation }: any) => {
           }
         />
       </View>
+      <View style={styles.btnReload}>
+        <TouchableOpacity onPress={onRefresh}>
+           <Ionicons name="sync-outline" size={26} color="#fff" />
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  btnReload: {
+    position: 'absolute',
+    bottom: 25,
+    right: 25,
+    backgroundColor: '#007AFF',
+    padding: 14,
+    borderRadius: 30,
+    elevation: 5,
+  },
   container: {
     flex: 1,
     backgroundColor: '#F3F4F6',
