@@ -9,10 +9,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -22,7 +22,7 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
-      - name: EAS Build (AAB)
+      - name: EAS Build (Cloud)
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
@@ -30,10 +30,10 @@ jobs:
             --platform android \
             --profile production \
             --non-interactive \
-            --output app-release.aab
+            --json > build-output.json
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Build JSON
+        uses: actions/upload-artifact@v4
         with:
-          name: android-aab
-          path: app-release.aab
+          name: eas-build-info
+          path: build-output.json
