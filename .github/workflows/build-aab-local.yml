@@ -1,0 +1,43 @@
+name: Build AAB Local (Expo)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-aab:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install expo tools
+        run: |
+          npm install -g expo-cli turtle-cli
+
+      - name: Install project dependencies
+        run: npm install
+
+      - name: Build AAB with turtle-cli
+        env:
+          EXPO_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          EXPO_ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+          EXPO_ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          mkdir -p build
+          turtle build:android \
+            --type app-bundle \
+            --keystore-path ./keystore.jks \
+            --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS \
+            --output build/app-release.aab
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-aab
+          path: build/app-release.aab
