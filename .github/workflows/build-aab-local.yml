@@ -38,7 +38,6 @@ jobs:
             --type app-bundle \
             --keystore-path ./keystore.jks \
             --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS \
-            --keystore-password $EXPO_ANDROID_KEYSTORE_PASSWORD \
             --key-password $EXPO_ANDROID_KEY_PASSWORD \
             --output build/app-release.aab
 
