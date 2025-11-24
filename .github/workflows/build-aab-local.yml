@@ -9,19 +9,24 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: Install expo tools
+      - name: Install expo & turtle-cli
         run: |
           npm install -g expo-cli turtle-cli
 
       - name: Install project dependencies
         run: npm install
+
+      # ⭐ Quan trọng: giải mã keystore từ Base64 để tạo file .jks
+      - name: Decode keystore file
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > keystore.jks
 
       - name: Build AAB with turtle-cli
         env:
@@ -34,10 +39,11 @@ jobs:
             --type app-bundle \
             --keystore-path ./keystore.jks \
             --keystore-alias $EXPO_ANDROID_KEYSTORE_ALIAS \
+            --keystore-password $EXPO_ANDROID_KEYSTORE_PASSWORD \
             --output build/app-release.aab
 
       - name: Upload AAB Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: android-aab
           path: build/app-release.aab
