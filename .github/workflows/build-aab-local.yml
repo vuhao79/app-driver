@@ -44,4 +44,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-aab
-          path: build/app-release.aab
+          path: '**/*.aab'
